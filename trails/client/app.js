@@ -40,7 +40,7 @@ trail_button.onclick = function(){
 	//data += "&description"+encodeURIComponent(description)
 
 	fetch("http://localhost:5500/trails", {method:"POST", body:data, headers:{"Content-Type":"application/x-www-form-urlencoded"}}).then(function(response){
-		response.json().then(function(data) {
+		response.json().then(function(data){
 			console.log(data)
 			add_div_with_trail(data)
 			data.forEach(trail => add_div_with_trail(trail))
