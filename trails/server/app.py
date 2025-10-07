@@ -25,7 +25,7 @@ def dict_factory(cursor, row):
 def hello_world():
     db = DB("db.db")
     trails = db.readall()
-    return trails, {"Access-Control-Allow-Origin":"*"}
+    return trails, 200, {"Access-Control-Allow-Origin":"*"}
 
 @app.route("/trails", methods=["POST"])
 def home():
