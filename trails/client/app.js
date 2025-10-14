@@ -6,7 +6,7 @@ load()
 
 function load(){
 	trail_div.innerHTML = ""
-	fetch("http://localhost:5500/trails")
+	fetch("http://localhost:5000/trails")
 	.then(function(response){
 		response.json()
 		.then(function(data) {
@@ -30,45 +30,41 @@ function add_div_with_trail(trail){
 	div.append(p2)
 	div.append(delete_button)
 
-	h3.innerHTML = trail.name
-	p.innerHTML = trail.length
-	delete_button.innerHTML = "X"
+	delete_button.onclick = function(){
+		remove_div(trail);
+		trail_div.remove()
+		fetch("http://localhost:5000/trails");
+	}
+
+	h3.innerHTML = trail.name;
+	p.innerHTML = trail.length;
+	delete_button.innerHTML = "X";
 }
 
 function remove_div(trail){
 	console.log("deleting")
-	trail.remove()
-	fetch("http://localhost:5500/trails/" + trail.id, {method:"DELETE", headers:{"Content-Type":"application/x-www-form-urlencoded"}
-	}).then(function(response){
+	fetch("http://localhost:5000/trails/" + trail.id, {method:"DELETE", headers:{"Content-Type":"application/x-www-form-urlencoded"}})
+	.then(function(response){
 		console.log(response)
 	})
 }
 
 trail_button.onclick = function(){
 	let name = document.querySelector("#trail_name").value
-	console.log(name)
+	let length = document.querySelector("#trail_length").value
 
 	let data = "name="+encodeURIComponent(name)
-	//data += "&description"+encodeURIComponent(description)
+	data += "&length="+encodeURIComponent(length)
 
-	fetch("http://localhost:5500/trails", {method:"POST", body:data, headers:{"Content-Type":"application/x-www-form-urlencoded"}}).then(function(response){
-		response.json().then(function(data){
+	fetch("http://localhost:5000/trails", {method:"POST", body:data, headers:{"Content-Type":"application/x-www-form-urlencoded"}}).then(response => response.json()
+		.then(data => {
 			console.log(data)
 			add_div_with_trail(data)
 			data.forEach(trail => add_div_with_trail(trail))
 
 			load()
 		})
-	})
-
-
+	)
 	console.log(data)
 
-}
-
-delete_button.onclick = function(){
-	let trail_div = delete_button.parentElement;
-	remove_div(trail_div)
-
-	fetch("http://localhost:5500/trails")
-}
+};

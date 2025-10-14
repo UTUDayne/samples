@@ -1,27 +1,34 @@
 import sqlite3
 
-connection = sqlite3.connect("db.db")
-cursor = connection.cursor()
-
-
 fields = ("\'name\', \'description\', \'length\', 'rating'")
 test_values = ("'blurt', 'blue', 4, 4")
 
 # cursor.execute("INSERT INTO trails " + fields + " " + test_values)
 # connection.commit()
 
+def dict_factory(cursor, row):
+    fields = []
+    # Extract column names from cursor description
+    for column in cursor.description:
+        fields.append(column[0])
 
+    # Create a dictionary where keys are column names and values are row values
+    result_dict = {}
+    for i in range(len(fields)):
+        result_dict[fields[i]] = row[i]
+
+    return result_dict
 
 class DB:
     def __init__(self, filename):
         self.filename = filename
-        self.connection = sqlite3.connection(self.filename)
-        self.cursor = self.connection.cursor
+        self.connection = sqlite3.connect(self.filename)
+        self.cursor = self.connection.cursor()
     
     def readall(self):
         self.cursor.execute("SELECT * FROM trails")
-        records = self.cursor.fetchall()
-        all = {}
+        rows = self.cursor.fetchall()
+        all = []
         for row in rows:
             d = dict_factory(self.cursor, row)
             all.append(d)
@@ -30,8 +37,12 @@ class DB:
     
     def insert(self, data):
         record = [data['name'], data['length']]
-        self.cursor.execute("INSERT INTO trails (name, length) VALUES (?, ?, ?, ?);", record)
-        self.connection.commit
+        self.cursor.execute("INSERT INTO trails (name, length) VALUES (?, ?);", record)
+        self.connection.commit()
+
+    def update(self, data):
+        self.cursor.execute("UPDATE FROM trails WHERE id=?", [data.id])
+        self.connection.commit()
 
     def delete(self, id):
         self.cursor.execute("DELETE FROM trails WHERE id=?", [id])
