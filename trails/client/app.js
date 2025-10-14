@@ -1,7 +1,7 @@
 console.log("connected")
 
-let trail_button = querySelector("#trail_button")
-const trail_div = querySelector("#trail_div")
+let trail_button = document.querySelector("#trail_button")
+const trail_div = document.querySelector("#trail_div")
 load()
 
 function load(){
@@ -23,13 +23,25 @@ function add_div_with_trail(trail){
 	let h3 = document.createElement("h3")
 	let p = document.createElement("p")
 	let p2 = document.createElement("p")
+	let delete_button = document.createElement("button")
 	trail_div.append(div)
 	div.append(h3)
 	div.append(p)
 	div.append(p2)
+	div.append(delete_button)
 
 	h3.innerHTML = trail.name
 	p.innerHTML = trail.length
+	delete_button.innerHTML = "X"
+}
+
+function remove_div(trail){
+	console.log("deleting")
+	trail.remove()
+	fetch("http://localhost:5500/trails/" + trail.id, {method:"DELETE", headers:{"Content-Type":"application/x-www-form-urlencoded"}
+	}).then(function(response){
+		console.log(response)
+	})
 }
 
 trail_button.onclick = function(){
@@ -52,4 +64,11 @@ trail_button.onclick = function(){
 
 	console.log(data)
 
+}
+
+delete_button.onclick = function(){
+	let trail_div = delete_button.parentElement;
+	remove_div(trail_div)
+
+	fetch("http://localhost:5500/trails")
 }

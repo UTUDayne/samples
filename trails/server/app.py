@@ -4,6 +4,11 @@ from db import DB
 
 app = Flask(__name__)
 
+@app.route("/trails<int:id>", methods=["OPTIONS"])
+def do_preflight(id):
+    return '', 204, {"Access-Control-Allow-Origin":"*", "Access-Control-Allow-Methods":"PUT, DELETE",
+                     "Access-Control-Allow-Headers":"Content-Type"}
+
 trails = [
     {"name": "Dead horse point", "length": "80"},
     {"name": "delicate arch", "length": "805"}
@@ -32,9 +37,19 @@ def home():
     db = DB("db.db")
     print(request.form)
     #trails.append({"name":request.form['name']})
-    record = {"name" : request.form["name"], "description" : request.form['description'], "length" : request.form['length'], "rating" : request.form["rating"]}
+    record = {"name" : request.form["name"], "length" : request.form['length']}
     db.insert(request.form)
     return "Created", 201, {"Access-Control-Allow-Origin":"*"}
+
+@app.route("/trails", methods["PUT"])
+def update():
+    pass
+
+@app.route("/trails/<int:id>", methods["DELETE"])
+def delete_trail():
+    db = DB("db.db")
+    db.delete(id)
+    return "Deleted", 200 {"Access-Control-Allow-Origin":"*"}
 
 def main():
     app.run()

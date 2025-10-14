@@ -4,12 +4,11 @@ connection = sqlite3.connect("db.db")
 cursor = connection.cursor()
 
 
-
-fields = ("'name', 'description', 'length', 'rating'")
+fields = ("\'name\', \'description\', \'length\', 'rating'")
 test_values = ("'blurt', 'blue', 4, 4")
 
-cursor.execute("INSERT INTO trails " + fields + " " + test_values)
-connection.commit()
+# cursor.execute("INSERT INTO trails " + fields + " " + test_values)
+# connection.commit()
 
 
 
@@ -26,12 +25,17 @@ class DB:
         for row in rows:
             d = dict_factory(self.cursor, row)
             all.append(d)
-        print(records)
+        print(all)
         return all
     
     def insert(self, data):
-        self.cursor.execute("INSERT INTO " + )
+        record = [data['name'], data['length']]
+        self.cursor.execute("INSERT INTO trails (name, length) VALUES (?, ?, ?, ?);", record)
         self.connection.commit
+
+    def delete(self, id):
+        self.cursor.execute("DELETE FROM trails WHERE id=?", [id])
+        self.connection.commit()
 
     def closeDB(self):
         self.connection.close()
