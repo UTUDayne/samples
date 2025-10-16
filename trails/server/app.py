@@ -4,9 +4,10 @@ from db import DB
 
 app = Flask(__name__)
 
-@app.route("/trails<int:id>", methods=["OPTIONS"])
+@app.route("/trails/<int:id>", methods=["OPTIONS"])
 def preflight(id):
-    return '', 204, {"Access-Control-Allow-Origin":"*", "Access-Control-Allow-Methods":"PUT,DELETE",
+    return '', 204, {"Access-Control-Allow-Origin":"*",
+                     "Access-Control-Allow-Methods":"PUT,DELETE",
                      "Access-Control-Allow-Headers":"Content-Type"}
 
 trails = [
@@ -25,17 +26,19 @@ def hello_world():
 def home():
     db = DB("db.db")
     print(request.form)
-    #trails.append({"name":request.form['name']})
     record = {"name" : request.form["name"], "length" : request.form['length']}
     db.insert(request.form)
     return "Created", 201, {"Access-Control-Allow-Origin":"*"}
 
 @app.route("/trails/<int:id>", methods=["PUT"])
-def update():
-    pass
+def update(id):
+    db = DB("db.db")
+    record = {"name" : request.form["name"], "length" : request.form['length']}
+    db.update(id, record)
+    return "Edited", 200, {"Access-Control-Allow-Origin":"*"}
 
 @app.route("/trails/<int:id>", methods=["DELETE"])
-def delete_trail():
+def delete_trail(id):
     db = DB("db.db")
     db.delete(id)
     return "Deleted", 200, {"Access-Control-Allow-Origin":"*"}

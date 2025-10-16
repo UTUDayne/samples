@@ -40,8 +40,9 @@ class DB:
         self.cursor.execute("INSERT INTO trails (name, length) VALUES (?, ?);", record)
         self.connection.commit()
 
-    def update(self, data):
-        self.cursor.execute("UPDATE FROM trails WHERE id=?", [data.id])
+    def update(self, id, data):
+        record = [data['name'], data['length'], id]
+        self.cursor.execute("UPDATE trails SET name=?, length=? WHERE id=?;", record)
         self.connection.commit()
 
     def delete(self, id):

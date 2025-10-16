@@ -1,5 +1,7 @@
 console.log("connected")
 
+API_URL = "http://localhost:5000/trails"
+
 let trail_button = document.querySelector("#trail_button")
 const trail_div = document.querySelector("#trail_div")
 load()
@@ -32,8 +34,8 @@ function add_div_with_trail(trail){
 
 	delete_button.onclick = function(){
 		remove_div(trail);
-		trail_div.remove()
-		fetch("http://localhost:5000/trails");
+		//trail_div.remove()
+		load()
 	}
 
 	h3.innerHTML = trail.name;
@@ -43,7 +45,16 @@ function add_div_with_trail(trail){
 
 function remove_div(trail){
 	console.log("deleting")
-	fetch("http://localhost:5000/trails/" + trail.id, {method:"DELETE", headers:{"Content-Type":"application/x-www-form-urlencoded"}})
+	fetch(API_URL + trail.id, {method:"DELETE", headers:{"Content-Type":"application/x-www-form-urlencoded"}})
+	.then(function(response){
+		console.log(response)
+	})
+}
+
+function edit_trail(trail){
+	console.log("Editing")
+	data = {'name':request.form['name'], 'length':request.form['length']}
+	fetch(API_URL + trail.id, {method:"PUT", body:data, headers:{"Content-Type":"application/x-www-form-urlencoded"}})
 	.then(function(response){
 		console.log(response)
 	})
