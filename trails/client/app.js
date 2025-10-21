@@ -1,6 +1,7 @@
 console.log("connected")
 
 API_URL = "http://localhost:5000/trails"
+let editID = null;
 
 let trail_button = document.querySelector("#trail_button")
 const trail_div = document.querySelector("#trail_div")
@@ -16,8 +17,10 @@ function load(){
 			add_div_with_trail(data)
 			data.forEach(trail => add_div_with_trail(trail))
 		})
-
 	})
+	document.querySelector("#trail_name").innerHTML = ""
+	document.querySelector("#trail_length").innerHTML = ""
+	
 }
 
 function add_div_with_trail(trail){
@@ -26,15 +29,26 @@ function add_div_with_trail(trail){
 	let p = document.createElement("p")
 	let p2 = document.createElement("p")
 	let delete_button = document.createElement("button")
+	let edit_button = document.createElement("button")
 	trail_div.append(div)
 	div.append(h3)
 	div.append(p)
 	div.append(p2)
 	div.append(delete_button)
+	div.append(edit_button)
+	//Empty the forms afterwards
 
 	delete_button.onclick = function(){
-		remove_div(trail);
-		//trail_div.remove()
+		let confirmation = confirm("Are you sure?")
+		console.log(confirmation)
+		if(confirmation == true){
+			remove_div(trail);
+			load()
+		}
+	}
+
+	edit_button.onclick = function(){
+		edit_trail(trail)
 		load()
 	}
 
@@ -45,16 +59,29 @@ function add_div_with_trail(trail){
 
 function remove_div(trail){
 	console.log("deleting")
-	fetch(API_URL + trail.id, {method:"DELETE", headers:{"Content-Type":"application/x-www-form-urlencoded"}})
+	fetch(API_URL + "/" + trail.id, {method:"DELETE", headers:{"Content-Type":"application/x-www-form-urlencoded"}})
 	.then(function(response){
 		console.log(response)
 	})
 }
 
 function edit_trail(trail){
+	let submit_method = null
+	let url = API_URL
 	console.log("Editing")
-	data = {'name':request.form['name'], 'length':request.form['length']}
-	fetch(API_URL + trail.id, {method:"PUT", body:data, headers:{"Content-Type":"application/x-www-form-urlencoded"}})
+	document.querySelector("#trail_name_edit").value = trail.name
+	document.querySelector("#trail_length_edit").value = trail.length
+	let data = "name="+encodeURIComponent(trail.name)
+	data = "&length="+encodeURIComponent(trail.length)
+	const button_text = document.querySelector("#trail_button_edit").innerHTML
+	if(button_text == "SAVE"){
+		submit_method = "PUT"
+		editID = trail.id
+		url = API_URL + "/" + editID
+	} else {
+		submit_method = "PUSH"
+	}
+	fetch(url, {method:submit_method, body:data, headers:{"Content-Type":"application/x-www-form-urlencoded"}})
 	.then(function(response){
 		console.log(response)
 	})
